@@ -65,8 +65,6 @@ function truncdots(str, n)
 end
 
 function print_header(io, Δt, Δb, ∑t, ∑b, name_length, header, allocations, linechars, compact, title)
-    global BOX_MODE, ALLOCATIONS_ENABLED
-
     midrule = linechars == :unicode ? "─" : "-"
     topbottomrule = linechars == :unicode ? "─" : "-"
     sec_ncalls = string(rpad("Section", name_length, " "), " ncalls  ")
