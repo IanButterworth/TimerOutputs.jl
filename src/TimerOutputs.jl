@@ -4,8 +4,8 @@ using ExprTools
 
 import Base: show, time_ns
 export TimerOutput, @timeit, @timeit_debug, reset_timer!, print_timer, timeit,
-                    enable_timer!, disable_timer!, @notimeit, get_timer,
-                    begin_timed_section!, end_timed_section!
+    enable_timer!, disable_timer!, @notimeit, get_timer,
+    begin_timed_section!, end_timed_section!
 
 
 function gc_bytes()
@@ -27,6 +27,7 @@ _precompile_()
 function __init__()
     # Reset DEFAULT_TIMER; otherwise starting time is the time of precompile
     reset_timer!()
+    return
 end
 
 end # module

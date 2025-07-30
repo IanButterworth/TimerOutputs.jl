@@ -16,7 +16,7 @@ Use `crop_root = true` to crop the root node to the first and last child nodes.
 function FlameGraphs.flamegraph(to::TimerOutput; crop_root = false)
     # Skip the very top-level node, which contains no useful data
     very_start = crop_root ? min_start_time(to) : to.start_data.time
-    node_data = _flamegraph_frame(to, very_start; toplevel=true, crop_root)
+    node_data = _flamegraph_frame(to, very_start; toplevel = true, crop_root)
     root = Node(node_data)
     return _to_flamegraph(to, root, very_start)
 end
@@ -47,7 +47,7 @@ function _flamegraph_frame(to::TimerOutput, start_ns; toplevel = false, crop_roo
     tt = Symbol(tt_str)
     # Set the pointer to ensure the sf is unique
     sf = StackFrame(tt, Symbol("none"), 0, nothing, false, false, Base.objectid(to))
-    status = 0x0  # "default" status -- See FlameGraphs.jl
+    status = 0x00  # "default" status -- See FlameGraphs.jl
     # TODO: is this supposed to be inclusive or exclusive?
     if toplevel
         # The root frame covers the total time being measured, so start when the first node
@@ -59,7 +59,7 @@ function _flamegraph_frame(to::TimerOutput, start_ns; toplevel = false, crop_roo
         _start = to.start_data.time
         _end = to.start_data.time + to.accumulated_data.time
     end
-    range = (Int(_start) : Int(_end)) .- start_ns
+    range = (Int(_start):Int(_end)) .- start_ns
     return FlameGraphs.NodeData(sf, status, range)
 end
 

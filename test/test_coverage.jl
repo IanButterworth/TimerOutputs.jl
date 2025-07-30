@@ -1,6 +1,6 @@
 function find_cov_files()
     pkg = joinpath(pkgdir(TimerOutputs), "test", "TestPkg")
-    return filter(endswith(".cov"), readdir(joinpath(pkg, "src"); join=true))
+    return filter(endswith(".cov"), readdir(joinpath(pkg, "src"); join = true))
 end
 
 # remove existing coverage
