@@ -3,17 +3,17 @@
 ###################
 
 function prettytime(t)
-    if t < 1e3
+    if t < 1.0e3
         value, units = t, "ns"
-    elseif t < 1e6
-        value, units = t / 1e3, "μs"
-    elseif t < 1e9
-        value, units = t / 1e6, "ms"
-    elseif t < 3600e9
-        value, units = t / 1e9, "s"
-    # We intentionally do not show minutes
+    elseif t < 1.0e6
+        value, units = t / 1.0e3, "μs"
+    elseif t < 1.0e9
+        value, units = t / 1.0e6, "ms"
+    elseif t < 3600.0e9
+        value, units = t / 1.0e9, "s"
+        # We intentionally do not show minutes
     else
-        value, units = t / 3600e9, "h"
+        value, units = t / 3600.0e9, "h"
     end
 
     if round(value) >= 100
@@ -74,9 +74,9 @@ function prettycount(t::Integer)
     elseif t < 1000^2
         value, units = t / 1000, "k"
     elseif t < 1000^3
-        value, units = t / 1e6, "M"
+        value, units = t / 1.0e6, "M"
     else
-        value, units = t / 1e9, "B"
+        value, units = t / 1.0e9, "B"
     end
 
     if round(value) >= 100
@@ -90,16 +90,16 @@ function prettycount(t::Integer)
 end
 
 function rpad(
-    s::Union{AbstractChar,AbstractString},
-    n::Integer,
-    p::Union{AbstractChar,AbstractString}=' ',
-) :: String
+        s::Union{AbstractChar, AbstractString},
+        n::Integer,
+        p::Union{AbstractChar, AbstractString} = ' ',
+    )::String
     n = Int(n)::Int
     m = signed(n) - Int(textwidth(s))::Int
     m ≤ 0 && return string(s)
     l = textwidth(p)
     q, r = divrem(m, l)
-    r == 0 ? string(s, p^q) : string(s, p^q, first(p, r))
+    return r == 0 ? string(s, p^q) : string(s, p^q, first(p, r))
 end
 
 #################
@@ -119,13 +119,13 @@ Converts a `TimerOutput` into a nested set of dictionaries, with keys and value 
 * `"inner_timers"`: `Dict{String, Dict{String, Any}}`
 """
 function todict(to::TimerOutput)
-    return Dict{String,Any}(
+    return Dict{String, Any}(
         "n_calls" => ncalls(to),
         "time_ns" => time(to),
         "allocated_bytes" => allocated(to),
         "total_allocated_bytes" => totallocated(to),
         "total_time_ns" => tottime(to),
-        "inner_timers" => Dict{String, Any}(k => todict(v) for (k,v) in to.inner_timers)
+        "inner_timers" => Dict{String, Any}(k => todict(v) for (k, v) in to.inner_timers)
     )
 end
 
@@ -143,7 +143,7 @@ struct InstrumentedFunction{F} <: Function
 end
 
 function funcname(f::F) where {F}
-    if @generated
+    return if @generated
         string(repr(F.instance))
     else
         string(repr(f))
@@ -153,7 +153,7 @@ end
 InstrumentedFunction(f, t) = InstrumentedFunction(f, t, funcname(f))
 
 function (inst::InstrumentedFunction)(args...; kwargs...)
-    @timeit inst.t inst.name inst.func(args...; kwargs...)
+    return @timeit inst.t inst.name inst.func(args...; kwargs...)
 end
 
 """
@@ -163,4 +163,4 @@ Instruments `f` by the [`TimerOutput`](@ref) `t` returning an `InstrumentedFunct
 This function can be used just like `f`, but whenever it is called it stores timing
 results in `t`.
 """
-(t::TimerOutput)(f, name=funcname(f)) = InstrumentedFunction(f, t, name)
+(t::TimerOutput)(f, name = funcname(f)) = InstrumentedFunction(f, t, name)
